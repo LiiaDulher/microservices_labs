@@ -1,14 +1,9 @@
-from src.data.data_storage import DataStorage
+from src.services.app.server import Server
 
 
 def main():
-    my_data = DataStorage()
-    my_data.save_data(1, "msg")
-    try:
-        my_data.save_data(1, "Non")
-    except KeyError as e:
-        print(e)
-    print(my_data.get_data_by_id(1))
+    server1 = Server("my")
+    server1.run("127.0.0.1", 8003)
 
 
 if __name__ == "__main__":
