@@ -11,9 +11,15 @@ class Client:
 
     def post_message(self, msg):
         data = {"msg": msg}
-        response = requests.post(self.url, json=data)
+        try:
+            response = requests.post(self.url, json=data)
+        except requests.exceptions.RequestException as err:
+            return 0, err
         return response.status_code, response.text
 
     def get_data(self):
-        response = requests.get(self.url)
+        try:
+            response = requests.get(self.url)
+        except requests.exceptions.RequestException as err:
+            return 0, err
         return response.status_code, response.text
