@@ -13,12 +13,14 @@ class LoggingServer(Server):
             if request.method == 'POST':
                 uuid = request.json["uuid"]
                 msg = request.json["msg"]
-                self.storage.save_data(uuid, msg)
-                print(msg)
-                return Response("Ok", 200)
+                try:
+                    self.storage.save_data(uuid, msg)
+                    print(msg)
+                    return Response("Ok", 200)
+                except KeyError as k:
+                    return Response(str(k), 409)
             elif request.method == 'GET':
-                data = {"all_msg": self.storage.get_all_data()}
-                return Response(data, 200)
+                return Response(self.storage.get_all_data(), 200)
 
     def add_facade_server(self, facade_path):
         self.facade_server = facade_path

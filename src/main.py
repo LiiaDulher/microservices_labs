@@ -1,9 +1,13 @@
-from src.services.app.server import Server
+from src.client.client import Client
 
 
 def main():
-    server1 = Server("my")
-    server1.run("127.0.0.1", 8003)
+    liia = Client("Liia Dulher")
+    liia.add_web_server("http://127.0.0.1:8000/")
+    liia.post_message("Hello")
+    print(liia.get_data())
+    liia.post_message("world")
+    print(liia.get_data())
 
 
 if __name__ == "__main__":

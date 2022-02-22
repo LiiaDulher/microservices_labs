@@ -1,5 +1,5 @@
 from src.services.app.server import Server
-from flask import request, render_template
+from flask import request, Response
 import requests
 
 
@@ -8,30 +8,21 @@ class FacadeServer(Server):
         super().__init__("FacadeService")
         self.log_server = None
         self.msg_server = None
+        self.uuid = 0
 
-        @self.app.route("/")
-        def hello():
-            # if request.method == 'POST':
-            #     pass
-            # elif request.method == 'GET':
-            #     pass
-            # else:
-            #     pass
-            # data = {"uuid": "12", "msg": "text"}
-            # url = self.log_server
-            # response = requests.post(url, json=data)
-            # print(response.text)
-            response = requests.get(self.msg_server)
-            print(response.text)
-            return render_template("home.html")
-
-        @self.app.route("/post")
-        def post_msg():
-            return "<p>Post your message.</p>"
-
-        @self.app.route("/get")
-        def get_msg():
-            return "<p>Get all messages.</p>"
+        @self.app.route("/", methods=['POST', 'GET'])
+        def facade():
+            if request.method == 'POST':
+                msg = request.json["msg"]
+                data = {"uuid": self.uuid+1, "msg": msg}
+                response = requests.post(self.log_server, json=data)
+                self.uuid += 1
+                return Response("Message successfully posted", 200)
+            elif request.method == 'GET':
+                response1 = requests.get(self.msg_server)
+                response2 = requests.get(self.log_server)
+                text = response2.text + response1.text
+                return Response(text, 200)
 
     def add_logging_server(self, log_path):
         self.log_server = log_path
