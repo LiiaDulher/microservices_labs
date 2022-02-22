@@ -12,10 +12,8 @@ class Client:
     def post_message(self, msg):
         data = {"msg": msg}
         response = requests.post(self.url, json=data)
-        if response:
-            return True
-        return False
+        return response.status_code, response.text
 
     def get_data(self):
         response = requests.get(self.url)
-        return response.text
+        return response.status_code, response.text

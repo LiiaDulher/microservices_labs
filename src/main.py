@@ -4,10 +4,22 @@ from src.client.client import Client
 def main():
     liia = Client("Liia Dulher")
     liia.add_web_server("http://127.0.0.1:8000/")
-    liia.post_message("Hello")
-    print(liia.get_data())
-    liia.post_message("world")
-    print(liia.get_data())
+    res = liia.post_message("Hello")
+    if res[0] != 200:
+        print(res[1])
+        return
+    res = liia.get_data()
+    print(res[1])
+    if res[0] != 200:
+        return
+    res = liia.post_message("world")
+    if res[0] != 200:
+        print(res[1])
+        return
+    res = liia.get_data()
+    print(res[1])
+    if res[0] != 200:
+        return
 
 
 if __name__ == "__main__":
