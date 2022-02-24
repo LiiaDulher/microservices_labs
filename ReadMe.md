@@ -9,9 +9,15 @@ python src/services/run/logging_server_run.py
 python src/services/run/messages_server_run.py
 ````
 
-You send POST or GET HTTP requests to facade services.
- ````
-examples
+You send <b>POST</b> or <b>GET</b> HTTP requests to facade services.
+#### Important!
+GET request does not require parameters.<br>
+POST request must have <b>json</b> body with field <b>msg</b> inside.<br>
+Example of POST request body.
+````
+{
+    "msg": "Hello world!"
+}
 ````
 
 By running main.py you can use my client for sending requests.<br>
