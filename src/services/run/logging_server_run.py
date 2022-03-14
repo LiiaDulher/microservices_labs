@@ -1,8 +1,11 @@
 from src.services.app.logging_service import LoggingServer
+from src.data.data_storage import DataStorage
 
 
 def main():
-    server = LoggingServer(1)
+    storage = DataStorage()
+    server = LoggingServer(1, storage)
+    server.add_facade_server("http://127.0.0.1:8000/")
     server.run("127.0.0.1", 8001)
 
 

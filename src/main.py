@@ -1,9 +1,33 @@
-from src.services.app.server import Server
+from src.client.client import Client
 
 
 def main():
-    server1 = Server("my")
-    server1.run("127.0.0.1", 8003)
+    client_name = input("Enter client's name: ")
+    client = Client(client_name)
+    client.add_web_server("http://127.0.0.1:8000/")
+    text = "start"
+    print("Please choose one of the options or 'end' to exit\n")
+    while text.lower() != "end":
+        text = input("'Post' or 'Get': ")
+        if text.lower() == "post":
+            msg = input("Enter message: ")
+            res = client.post_message(msg)
+            if res[0] != 200:
+                print("Error:", res[1])
+            else:
+                print("Message successfully posted.\n")
+        elif text.lower() == "get":
+            res = client.get_data()
+            if res[0] != 200:
+                print("Error:", res[1])
+            else:
+                print(res[1])
+                print()
+        elif text.lower() == "end":
+            pass
+        else:
+            print("Please choose one of the options or 'end' to exit\n")
+    return
 
 
 if __name__ == "__main__":
