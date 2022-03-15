@@ -5,10 +5,24 @@
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
 
 Run all services using their runners.
+You can do it using default settings:
 ````
 python src/services/run/facade_server_run.py
 python src/services/run/logging_server_run.py
 python src/services/run/messages_server_run.py
+````
+or customize:
+````
+python src/services/run/facade_server_run.py server_host server_port logging_server_url messages_server_url
+python src/services/run/facade_server_run.py 127.0.0.1 8000 http://127.0.0.1:8001/ http://127.0.0.1:8002/
+````
+````
+python src/services/run/logging_server_run.py server_number server_host server_port facade_server_url
+python src/services/run/logging_server_run.py 1 127.0.0.1 8001 http://127.0.0.1:8000/
+````
+````
+python src/services/run/messages_server_run.py server_number server_host server_port facade_server_url
+python src/services/run/messages_server_run.py 2 127.0.0.1 8002 http://127.0.0.1:8000/
 ````
 
 You send <b>POST</b> or <b>GET</b> HTTP requests to facade services.
