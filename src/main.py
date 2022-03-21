@@ -4,7 +4,8 @@ from src.client.client import Client
 def main():
     client_name = input("Enter client's name: ")
     client = Client(client_name)
-    client.add_web_server("http://127.0.0.1:8000/")
+    web_server = input("Enter web-server url: ")
+    client.add_web_server(web_server)
     text = "start"
     print("Please choose one of the options or 'end' to exit\n")
     while text.lower() != "end":
