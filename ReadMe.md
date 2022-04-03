@@ -1,5 +1,5 @@
-# Task 1
-## Microservices basics
+# Task 3
+## Microservices with Hazelcast
 ## Team: [Liia Dulher](https://github.com/LiiaDulher)
 ### Usage
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
