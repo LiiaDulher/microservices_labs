@@ -1,5 +1,12 @@
+import hazelcast
+
+
 class DataStorage:
     def __init__(self):
+        # TODO: use dist_map not data
+        # TODO: specify node
+        hz = hazelcast.HazelcastClient()
+        self.dist_map = hz.get_map("logging-service-distributed-map").blocking()
         self.data = {}
 
     def save_data(self, uuid, msg):
