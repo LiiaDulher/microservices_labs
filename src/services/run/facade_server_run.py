@@ -1,6 +1,6 @@
-from src.services.app.facade_service import FacadeServer
-
 import sys
+
+from src.services.app.facade_service import FacadeServer
 
 
 def main():

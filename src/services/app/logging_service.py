@@ -1,7 +1,8 @@
+from flask import request, Response
+
 from src.services.app.server import Server
 from src.data.local_map import LocalMap
 # from src.data.local_map import DistributedMap
-from flask import request, Response
 
 
 class LoggingServer(Server):

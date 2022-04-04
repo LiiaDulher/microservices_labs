@@ -1,9 +1,11 @@
-from src.services.app.server import Server
+import random
+import requests
+import time
+
 from flask import request, Response
 from threading import Thread
-import time
-import requests
-import random
+
+from src.services.app.server import Server
 
 
 class FacadeServer(Server):

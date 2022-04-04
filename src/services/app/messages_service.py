@@ -1,5 +1,6 @@
-from src.services.app.server import Server
 from flask import request, Response
+
+from src.services.app.server import Server
 
 
 class MessageServer(Server):
