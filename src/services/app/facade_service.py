@@ -1,5 +1,7 @@
 from src.services.app.server import Server
 from flask import request, Response
+from threading import Thread
+import time
 import requests
 import random
 
@@ -8,8 +10,13 @@ class FacadeServer(Server):
     def __init__(self):
         super().__init__("FacadeService")
         self.log_server = []
+        self.log_servers_removed = []
         self.msg_server = None
         self.uuid = 0
+        self.shutdown = False
+        self.updater = Thread(target=self.update_log_services)
+        self.updater.daemon = True
+        self.updater.start()
 
         @self.app.route("/", methods=['POST', 'GET'])
         def facade():
@@ -44,6 +51,10 @@ class FacadeServer(Server):
                 text = response2.text + response1.text
                 return Response(text, 200)
 
+    def __del__(self):
+        self.shutdown = True
+        self.updater.join()
+
     def add_logging_server(self, log_path):
         self.log_server.append(log_path)
 
@@ -52,6 +63,22 @@ class FacadeServer(Server):
 
     def remove_logging_server(self, log_path):
         self.log_server.remove(log_path)
+        self.log_servers_removed.append(log_path)
+
+    def update_log_services(self):
+        while not self.shutdown:
+            time.sleep(10)
+            restored = []
+            for server in self.log_servers_removed:
+                try:
+                    response = requests.get(server)
+                except requests.exceptions.RequestException as err:
+                    continue
+                if response.status_code == 200:
+                    self.add_logging_server(server)
+                    restored.append(server)
+            for server in restored:
+                self.log_servers_removed.remove(server)
 
     def choose_random_logging_server(self):
         return random.choice(self.log_server)
