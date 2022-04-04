@@ -1,12 +1,13 @@
 from src.services.app.server import Server
 from flask import request, Response
 import requests
+import random
 
 
 class FacadeServer(Server):
     def __init__(self):
         super().__init__("FacadeService")
-        self.log_server = None
+        self.log_server = []
         self.msg_server = None
         self.uuid = 0
 
@@ -14,23 +15,28 @@ class FacadeServer(Server):
         def facade():
             if request.method == 'POST':
                 msg = request.json["msg"]
-                return self.post_request(self.log_server, msg)
+                log_server = self.choose_random_logging_server()
+                return self.post_request(log_server, msg)
             elif request.method == 'GET':
                 response1 = self.get_request(self.msg_server, "Message")
-                response2 = self.get_request(self.log_server, "Logging")
+                log_server = self.choose_random_logging_server()
+                response2 = self.get_request(log_server, "Logging")
                 if response1.status_code != 200 or response2.status_code != 200:
                     return Response("Internal Server Error", 500)
                 text = response2.text + response1.text
                 return Response(text, 200)
 
     def add_logging_server(self, log_path):
-        self.log_server = log_path
+        self.log_server.append(log_path)
 
     def add_messages_server(self, msg_path):
         self.msg_server = msg_path
 
     def remove_logging_server(self, log_path):
         pass
+
+    def choose_random_logging_server(self):
+        return random.choice(self.log_server)
 
     def post_request(self, server, msg):
         i = 0
