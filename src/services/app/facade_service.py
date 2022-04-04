@@ -15,12 +15,30 @@ class FacadeServer(Server):
         def facade():
             if request.method == 'POST':
                 msg = request.json["msg"]
-                log_server = self.choose_random_logging_server()
-                return self.post_request(log_server, msg)
+                while True:
+                    try:
+                        log_server = self.choose_random_logging_server()
+                    except IndexError:
+                        return Response("Internal Server Error", 500)
+                    response = self.post_request(log_server, msg)
+                    if response.status_code == 200:
+                        break
+                    else:
+                        self.remove_logging_server(log_server)
+                return response
             elif request.method == 'GET':
                 response1 = self.get_request(self.msg_server, "Message")
-                log_server = self.choose_random_logging_server()
-                response2 = self.get_request(log_server, "Logging")
+                while True:
+                    try:
+                        log_server = self.choose_random_logging_server()
+                    except IndexError:
+                        response2 = Response("Internal Server Error", 500)
+                        break
+                    response2 = self.get_request(log_server, "Logging")
+                    if response2.status_code == 200:
+                        break
+                    else:
+                        self.remove_logging_server(log_server)
                 if response1.status_code != 200 or response2.status_code != 200:
                     return Response("Internal Server Error", 500)
                 text = response2.text + response1.text
@@ -33,7 +51,7 @@ class FacadeServer(Server):
         self.msg_server = msg_path
 
     def remove_logging_server(self, log_path):
-        pass
+        self.log_server.remove(log_path)
 
     def choose_random_logging_server(self):
         return random.choice(self.log_server)
