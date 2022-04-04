@@ -1,11 +1,12 @@
 from src.services.app.server import Server
+from src.data.data_storage import DataStorage
 from flask import request, Response
 
 
 class LoggingServer(Server):
-    def __init__(self, number, storage):
+    def __init__(self, number, storage_node):
         super().__init__("LoggingServer"+str(number))
-        self.storage = storage
+        self.storage = DataStorage(storage_node)
         self.facade_server = None
 
         @self.app.route("/", methods=['POST', 'GET'])

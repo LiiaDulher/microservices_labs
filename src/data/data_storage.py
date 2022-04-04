@@ -2,10 +2,12 @@ import hazelcast
 
 
 class DataStorage:
-    def __init__(self):
+    def __init__(self, storage_node):
         # TODO: use dist_map not data
         # TODO: specify node
-        # hz = hazelcast.HazelcastClient()
+        # hz = hazelcast.HazelcastClient(cluster_members=[
+        #         storage_node
+        #     ])
         # self.dist_map = hz.get_map("logging-service-distributed-map").blocking()
         self.data = {}
 
