@@ -1,6 +1,7 @@
 from flask import request, Response
 
 from src.data.distributed_map import DistributedMap
+from data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 from src.services.app.server import Server
 
 
@@ -21,8 +22,14 @@ class LoggingServer(Server):
                     return Response("Ok", 200)
                 except KeyError as k:
                     return Response(str(k), 409)
+                except HazelcastUnavailable as err:
+                    return Response(str(err), 500)
             elif request.method == 'GET':
-                return Response(self.storage.get_all_data(), 200)
+                try:
+                    values = self.storage.get_all_data()
+                    return Response(values, 200)
+                except HazelcastUnavailable as err:
+                    return Response(str(err), 500)
 
     def add_facade_server(self, facade_path):
         self.facade_server = facade_path

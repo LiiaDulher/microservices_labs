@@ -91,7 +91,7 @@ class FacadeServer(Server):
         try:
             response = requests.post(server, json=data)
         except requests.exceptions.RequestException as err:
-            print("Logging service error:", err)
+            print("Logging service[", server, "]error:", err)
             return Response("Internal Service Error", 500)
         while i < 10:
             if response.status_code == 200:
@@ -100,13 +100,13 @@ class FacadeServer(Server):
                 self.uuid += 10
                 i += 1
             else:
-                print("Logging service POST request error:", response.status_code, response.text)
+                print("Logging service[", server, "] POST request error:", response.status_code, response.text)
                 return Response("Internal Service Error", 500)
             data = {"uuid": self.uuid + 1, "msg": msg}
             try:
                 response = requests.post(server, json=data)
             except requests.exceptions.RequestException as err:
-                print("Logging service error:", err)
+                print("Logging service[", server, "] error:", err)
                 return Response("Internal Service Error", 500)
         self.uuid += 1
         return Response("Message successfully posted", 200)
@@ -115,9 +115,9 @@ class FacadeServer(Server):
         try:
             response = requests.get(server)
         except requests.exceptions.RequestException as err:
-            print(server_type, "service error:", err)
+            print(server_type, "service[", server, "] error:", err)
             return Response("Internal Server Error", 500)
         if response.status_code != 200:
-            print(server_type, "service GET request error:", response.status_code, response.text)
+            print(server_type, "service[", server, "] GET request error:", response.status_code, response.text)
             return Response("Internal Server Error", 500)
         return response

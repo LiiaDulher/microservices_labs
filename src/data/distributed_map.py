@@ -1,26 +1,48 @@
 import hazelcast
 
 from data.data_storage import DataStorage
+from data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 
 class DistributedMap(DataStorage):
-    # TODO: add error "No hazelcast"
     def __init__(self, storage_node):
-        hz = hazelcast.HazelcastClient(cluster_members=[
+        try:
+            self.hz = hazelcast.HazelcastClient(cluster_members=[
                 storage_node
             ])
-        self.map = hz.get_map("logging-service-distributed-map").blocking()
+            self.map = self.hz.get_map("logging-service-distributed-map").blocking()
+        except hazelcast.errors.IllegalStateError:
+            print("Failed to connect to Hazelcast")
+            self.map = None
 
     def save_data(self, uuid, msg):
-        if self.map.contains_key(uuid):
-            raise KeyError("Such id already exists")
-        self.map.put(uuid, msg)
+        if self.map is None:
+            raise HazelcastUnavailable
+        try:
+            if self.map.contains_key(uuid):
+                raise KeyError("Such id already exists")
+            self.map.put(uuid, msg)
+        except hazelcast.errors.TargetDisconnectedError as err:
+            print(err)
+            raise HazelcastUnavailable
 
     def get_data_by_id(self, uuid):
-        if self.map.contains_key(uuid):
-            return self.map.get(uuid)
-        raise KeyError("Such id does not exist")
+        if self.map is None:
+            raise HazelcastUnavailable
+        try:
+            if self.map.contains_key(uuid):
+                return self.map.get(uuid)
+            raise KeyError("Such id does not exist")
+        except hazelcast.errors.TargetDisconnectedError as err:
+            print(err)
+            raise HazelcastUnavailable
 
     def get_all_data(self):
-        values = self.map.values()
-        return "\n".join(values)
+        if self.map is None:
+            raise HazelcastUnavailable
+        try:
+            values = self.map.values()
+            return "\n".join(values) + "\n"
+        except hazelcast.errors.TargetDisconnectedError as err:
+            print(err)
+            raise HazelcastUnavailable
