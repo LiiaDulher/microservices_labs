@@ -4,6 +4,8 @@
 ### Usage
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
 
+Run Hazelcast before logging services, that use it.
+
 Run all services using their runners.
 You can do it using default settings:
 ````
