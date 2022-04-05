@@ -1,15 +1,13 @@
 from flask import request, Response
 
+from src.data.distributed_map import DistributedMap
 from src.services.app.server import Server
-from src.data.local_map import LocalMap
-# from src.data.local_map import DistributedMap
 
 
 class LoggingServer(Server):
     def __init__(self, number, storage_node):
         super().__init__("LoggingServer"+str(number))
-        self.storage = LocalMap()
-        # self.storage = DistributedMap(storage_node)
+        self.storage = DistributedMap(storage_node)
         self.facade_server = None
 
         @self.app.route("/", methods=['POST', 'GET'])

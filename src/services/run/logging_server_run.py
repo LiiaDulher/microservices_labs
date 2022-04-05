@@ -10,7 +10,7 @@ def main():
         facade_server = "http://127.0.0.1:8000/"
         host = "127.0.0.1"
         port = 8001
-        storage_node = "http://127.0.0.1:5701/"
+        storage_node = "127.0.0.1:5701"
     elif n == 6:
         number = sys.argv[1]
         host = sys.argv[2]

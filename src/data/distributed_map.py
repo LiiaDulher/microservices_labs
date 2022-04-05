@@ -4,6 +4,7 @@ from data.data_storage import DataStorage
 
 
 class DistributedMap(DataStorage):
+    # TODO: add error "No hazelcast"
     def __init__(self, storage_node):
         hz = hazelcast.HazelcastClient(cluster_members=[
                 storage_node
