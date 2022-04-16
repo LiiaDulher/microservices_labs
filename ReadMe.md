@@ -1,10 +1,11 @@
-# Task 3
-## Microservices with Hazelcast
+# Task 4
+## Microservices with Messaging queue
 ## Team: [Liia Dulher](https://github.com/LiiaDulher)
 ### Usage
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
 
-Run Hazelcast before logging services, that use it.
+Run Hazelcast nodes before logging services, that use it.
+Run Hazelcast noodes before messaging services, that use it.
 
 Run all services using their runners.
 You can do it using default settings:
