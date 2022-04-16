@@ -1,6 +1,6 @@
-from src.services.app.messages_service import MessageServer
-
 import sys
+
+from src.services.app.messages_service import MessageServer
 
 
 def main():

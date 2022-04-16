@@ -1,7 +1,6 @@
-from src.services.app.logging_service import LoggingServer
-from src.data.data_storage import DataStorage
-
 import sys
+
+from src.services.app.logging_service import LoggingServer
 
 
 def main():
@@ -11,17 +10,18 @@ def main():
         facade_server = "http://127.0.0.1:8000/"
         host = "127.0.0.1"
         port = 8001
-    elif n == 5:
+        storage_node = "127.0.0.1:5701"
+    elif n == 6:
         number = sys.argv[1]
         host = sys.argv[2]
         port = sys.argv[3]
-        facade_server = sys.argv[4]
+        storage_node = sys.argv[4]
+        facade_server = sys.argv[5]
     else:
         print("Wrong arguments number. Use default arguments or give yours in such order:\n"
-              "server number, server host, server port, facade server url")
+              "server number, server host, server port, storage node url, facade server url")
         return
-    storage = DataStorage()
-    server = LoggingServer(number, storage)
+    server = LoggingServer(number, storage_node)
     server.add_facade_server(facade_server)
     server.run(host, port)
 
