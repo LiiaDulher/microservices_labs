@@ -1,4 +1,4 @@
-from data.data_storage import DataStorage
+from src.data.data_storage import DataStorage
 
 
 class LocalMap(DataStorage):

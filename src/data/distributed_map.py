@@ -1,7 +1,7 @@
 import hazelcast
 
-from data.data_storage import DataStorage
-from data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
+from src.data.data_storage import DataStorage
+from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 
 class DistributedMap(DataStorage):
