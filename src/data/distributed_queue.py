@@ -1,6 +1,6 @@
 import hazelcast
 
-from data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
+from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 
 class DistributedQueue:

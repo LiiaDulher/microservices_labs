@@ -1,7 +1,7 @@
 from flask import request, Response
 
 from src.data.distributed_map import DistributedMap
-from data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
+from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 from src.services.app.server import Server
 
 

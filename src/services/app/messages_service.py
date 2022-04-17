@@ -1,5 +1,6 @@
 from flask import request, Response
 
+from src.data.local_map import LocalMap
 from src.services.app.server import Server
 
 
