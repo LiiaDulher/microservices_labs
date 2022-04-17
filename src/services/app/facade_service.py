@@ -5,6 +5,8 @@ import time
 from flask import request, Response
 from threading import Thread
 
+from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
+from src.data.distributed_queue import DistributedQueue
 from src.services.app.server import Server
 
 
@@ -16,6 +18,7 @@ class FacadeServer(Server):
         self.msg_server = []
         self.msg_servers_removed = []
         self.uuid = 0
+        self.queue = DistributedQueue()
         self.shutdown = False
         self.updater = Thread(target=self.update_services)
         self.updater.daemon = True
@@ -25,8 +28,11 @@ class FacadeServer(Server):
         def facade():
             if request.method == 'POST':
                 msg = request.json["msg"]
-                response = self.post_on_log_server(msg)
-                return response
+                response1 = self.post_on_log_server(msg)
+                response2 = self.post_on_msg_server(msg)
+                if response1.status_code != 200 or response2.status_code != 200:
+                    return Response("Internal Server Error", 500)
+                return response1
             elif request.method == 'GET':
                 response1 = self.get_from_msg_server()
                 response2 = self.get_from_log_server()
@@ -136,7 +142,11 @@ class FacadeServer(Server):
         return response
 
     def post_on_msg_server(self, msg):
-        pass
+        try:
+            self.queue.put_data(msg)
+        except HazelcastUnavailable as err:
+            return Response(str(err), 500)
+        return Response("Ok", 200)
 
     def get_from_log_server(self):
         while True:

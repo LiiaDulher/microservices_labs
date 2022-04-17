@@ -20,6 +20,3 @@ class LocalMap(DataStorage):
         for key in self.map.keys():
             all_data += self.map[key] + "\n"
         return all_data
-
-    def __len__(self):
-        return len(self.map.keys())
