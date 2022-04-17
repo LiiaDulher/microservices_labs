@@ -26,7 +26,6 @@ class MessageServer(Server):
             if request.method == 'GET':
                 values = self.storage.get_all_data()
                 return Response(values, 200)
-                # return Response("Not implemented yet", 200)
 
     def __del__(self):
         self.shutdown = True
