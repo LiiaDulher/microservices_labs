@@ -17,7 +17,7 @@ class FacadeServer(Server):
         self.msg_servers_removed = []
         self.uuid = 0
         self.shutdown = False
-        self.updater = Thread(target=self.update_log_services)
+        self.updater = Thread(target=self.update_services)
         self.updater.daemon = True
         self.updater.start()
 
@@ -53,7 +53,7 @@ class FacadeServer(Server):
         self.msg_server.remove(msg_path)
         self.msg_servers_removed.append(msg_path)
 
-    def update_log_services(self):
+    def update_services(self):
         while not self.shutdown:
             time.sleep(10)
             restored = []
