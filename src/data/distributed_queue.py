@@ -15,14 +15,26 @@ class DistributedQueue:
     def get_data(self):
         if self.queue is None:
             raise HazelcastUnavailable
-        return self.queue.poll()
+        try:
+            return self.queue.poll()
+        except hazelcast.errors.TargetDisconnectedError as err:
+            print(err)
+            raise HazelcastUnavailable
 
     def put_data(self, msg):
         if self.queue is None:
             raise HazelcastUnavailable
-        self.queue.put(msg)
+        try:
+            self.queue.put(msg)
+        except hazelcast.errors.TargetDisconnectedError as err:
+            print(err)
+            raise HazelcastUnavailable
 
     def is_empty(self):
         if self.queue is None:
             raise HazelcastUnavailable
-        return self.queue.is_empty()
+        try:
+            return self.queue.is_empty()
+        except hazelcast.errors.TargetDisconnectedError as err:
+            print(err)
+            raise HazelcastUnavailable

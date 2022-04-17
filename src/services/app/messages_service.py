@@ -3,6 +3,7 @@ import time
 from flask import request, Response
 from threading import Thread
 
+from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 from src.data.distributed_queue import DistributedQueue
 from src.data.local_map import LocalMap
 from src.services.app.server import Server
@@ -23,7 +24,9 @@ class MessageServer(Server):
         @self.app.route("/", methods=['GET'])
         def msg_request():
             if request.method == 'GET':
-                return Response("Not implemented yet", 200)
+                values = self.storage.get_all_data()
+                return Response(values, 200)
+                # return Response("Not implemented yet", 200)
 
     def __del__(self):
         self.shutdown = True
@@ -35,4 +38,15 @@ class MessageServer(Server):
     def post_msg(self):
         while not self.shutdown:
             time.sleep(10)
+            try:
+                if not self.queue.is_empty():
+                    try:
+                        msg = self.queue.get_data()
+                        print(msg)
+                        self.storage.save_data(self.id, msg)
+                        self.id += 1
+                    except HazelcastUnavailable as err:
+                        print(err)
+            except HazelcastUnavailable as err:
+                print(err)
 
