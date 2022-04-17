@@ -51,21 +51,28 @@ Message successfully posted.
 
 'Post' or 'Get': get
 msg1
-Not implemented yet
+msg1
 
 'Post' or 'Get': post
-Enter message: msf2
+Enter message: msg2
 Message successfully posted.
 
 'Post' or 'Get': post
-Enter message: msg1
+Enter message: msg3
 Message successfully posted.
 
 'Post' or 'Get': get
 msg1
-msf2
+msg2
+msg3
+msg2
+
+'Post' or 'Get': get
 msg1
-Not implemented yet
+msg2
+msg3
+msg1
+msg3
 
 'Post' or 'Get': end
 ````
