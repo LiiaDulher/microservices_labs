@@ -10,5 +10,8 @@ class DistributedQueue:
     def get_data(self):
         pass
 
+    def put_data(self, msg):
+        pass
+
     def is_empty(self):
         pass
