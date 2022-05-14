@@ -2,7 +2,7 @@ from flask import request, Response
 
 from src.data.distributed_map import DistributedMap
 from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
-from src.services.app.server import Server
+from services.server import Server
 
 
 class LoggingServer(Server):

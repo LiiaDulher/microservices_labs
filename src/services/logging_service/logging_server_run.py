@@ -1,6 +1,6 @@
 import sys
 
-from src.services.app.logging_service import LoggingServer
+from services.logging_service.logging_service import LoggingServer
 
 
 def main():

@@ -7,7 +7,7 @@ from threading import Thread
 
 from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 from src.data.distributed_queue import DistributedQueue
-from src.services.app.server import Server
+from services.server import Server
 
 
 class FacadeServer(Server):
