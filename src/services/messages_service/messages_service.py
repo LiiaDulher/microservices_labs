@@ -1,3 +1,4 @@
+import consul
 import time
 
 from flask import request, Response
@@ -10,8 +11,10 @@ from services.server import Server
 
 
 class MessageServer(Server):
-    def __init__(self, number):
-        super().__init__("MessageServer"+str(number))
+    def __init__(self, number, host, port):
+        super().__init__("MessageServer"+str(number), host, port)
+        self.consul = consul.Consul()
+        self.register_myself()
         self.facade_server = None
         self.storage = LocalMap()
         self.queue = DistributedQueue()
@@ -27,12 +30,21 @@ class MessageServer(Server):
                 values = self.storage.get_all_data()
                 return Response(values, 200)
 
+        @self.app.route("/health", methods=['GET'])
+        def health_check():
+            return Response("healthy", 200)
+
     def __del__(self):
         self.shutdown = True
         self.queue_msg.join()
 
     def add_facade_server(self, facade_path):
         self.facade_server = facade_path
+
+    def register_myself(self):
+        url = "http://" + self.host + ":" + self.port + "/health"
+        self.consul.agent.service.register(name='messages-service', service_id=self.name,
+                                           check=consul.Check.http(url=url, interval='10s'))
 
     def post_msg(self):
         while not self.shutdown:

@@ -3,10 +3,12 @@ from flask import Flask
 
 class Server:
 
-    def __init__(self, name):
+    def __init__(self, name, host, port):
         self.app = Flask(name)
         self.name = name
+        self.host = host
+        self.port = port
 
-    def run(self, host, port):
-        self.app.run(host=host, port=port)
+    def run(self):
+        self.app.run(host=self.host, port=self.port)
 

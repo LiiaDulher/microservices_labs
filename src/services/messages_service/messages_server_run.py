@@ -19,9 +19,9 @@ def main():
         print("Wrong arguments number. Use default arguments or give yours in such order:\n"
               "server number, server host, server port, facade server url")
         return
-    server = MessageServer(number)
+    server = MessageServer(number, host, port)
     server.add_facade_server(facade_server)
-    server.run(host, port)
+    server.run()
 
 
 if __name__ == "__main__":

@@ -11,8 +11,8 @@ from services.server import Server
 
 
 class FacadeServer(Server):
-    def __init__(self):
-        super().__init__("FacadeService")
+    def __init__(self, host, port):
+        super().__init__("FacadeService", host, port)
         self.log_server = []
         self.log_servers_removed = []
         self.msg_server = []
