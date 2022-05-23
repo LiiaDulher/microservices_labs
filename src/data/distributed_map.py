@@ -15,8 +15,11 @@ class DistributedMap(DataStorage):
             print("Failed to connect to Hazelcast")
             self.map = None
 
+    def empty_map(self):
+        return self.map is None
+
     def save_data(self, uuid, msg):
-        if self.map is None:
+        if self.empty_map():
             raise HazelcastUnavailable
         try:
             if self.map.contains_key(uuid):
@@ -27,7 +30,7 @@ class DistributedMap(DataStorage):
             raise HazelcastUnavailable
 
     def get_data_by_id(self, uuid):
-        if self.map is None:
+        if self.empty_map():
             raise HazelcastUnavailable
         try:
             if self.map.contains_key(uuid):
@@ -38,7 +41,7 @@ class DistributedMap(DataStorage):
             raise HazelcastUnavailable
 
     def get_all_data(self):
-        if self.map is None:
+        if self.empty_map():
             raise HazelcastUnavailable
         try:
             values = self.map.values()
