@@ -5,12 +5,12 @@ from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 
 class DistributedMap(DataStorage):
-    def __init__(self, storage_node):
+    def __init__(self, storage_node, map_name):
         try:
             self.hz = hazelcast.HazelcastClient(cluster_members=[
                 storage_node
             ], cluster_connect_timeout=30)
-            self.map = self.hz.get_map("logging-service-distributed-map").blocking()
+            self.map = self.hz.get_map(map_name).blocking()
         except hazelcast.errors.IllegalStateError:
             print("Failed to connect to Hazelcast")
             self.map = None

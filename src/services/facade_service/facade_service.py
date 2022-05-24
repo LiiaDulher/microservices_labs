@@ -22,7 +22,8 @@ class FacadeServer(Server):
         self.msg_number = 0
         self.get_services()
         self.uuid = 0
-        self.queue = DistributedQueue()
+        self.queue_name = None
+        self.queue = DistributedQueue(self.queue_name)
         self.shutdown = False
         self.updater = Thread(target=self.update_services)
         self.updater.daemon = True
@@ -60,6 +61,10 @@ class FacadeServer(Server):
         self.consul.agent.service.register(name='facade-service', service_id=self.name, address=address,
                                            check=consul.Check.http(url=url, interval='10s'))
 
+    def get_queue_info(self):
+        index, data = self.consul.kv.get('hazelcast-queue-name')
+        self.queue_name = data['Value']
+
     def remove_logging_server(self, log_path):
         self.log_server.remove(log_path)
 
@@ -82,7 +87,7 @@ class FacadeServer(Server):
 
     def update_services(self):
         while not self.shutdown:
-            time.sleep(30)
+            time.sleep(10)
             if (len(self.log_server) != self.log_number) or (len(self.msg_server) != self.msg_number):
                 self.get_services()
 

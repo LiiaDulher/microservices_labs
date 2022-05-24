@@ -4,10 +4,10 @@ from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 
 class DistributedQueue:
-    def __init__(self):
+    def __init__(self, queue_name):
         try:
             self.hz = hazelcast.HazelcastClient(cluster_connect_timeout=30)
-            self.queue = self.hz.get_queue("messages-service-distributed-queue").blocking()
+            self.queue = self.hz.get_queue(queue_name).blocking()
         except hazelcast.errors.IllegalStateError:
             print("Failed to connect to Hazelcast")
             self.queue = None

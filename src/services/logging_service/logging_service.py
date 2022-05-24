@@ -8,10 +8,14 @@ from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 
 class LoggingServer(Server):
-    def __init__(self, number, host, port, storage_node):
+    def __init__(self, number, host, port):
         super().__init__("LoggingServer" + str(number), host, port)
+        self.number = number
         self.consul = consul.Consul()
-        self.storage = DistributedMap(storage_node)
+        self.map_name = None
+        self.storage_node = None
+        self.get_map_info()
+        self.storage = DistributedMap(self.storage_node, self.map_name)
         self.facade_server = []
         self.register_myself()
         self.get_facade_server()
@@ -54,3 +58,10 @@ class LoggingServer(Server):
         for server_name in services.keys():
             if services[server_name]['Service'] == 'facade-service':
                 self.facade_server.append(services[server_name]['Address'])
+
+    def get_map_info(self):
+        index, data = self.consul.kv.get('hazelcast-map-name')
+        self.map_name = data['Value']
+
+        index, data = self.consul.kv.get('hazelcast-client-' + str(self.number))
+        self.storage_node = data['Value']

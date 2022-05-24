@@ -4,8 +4,16 @@
 ### Usage
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
 
-Run Hazelcast nodes before logging services, that use it.
-Run Hazelcast noodes before messaging services, that use it.
+Run Hazelcast nodes before logging services, that use it.<br>
+Run Hazelcast nodes before messaging services, that use it.
+
+Start consul before all other services.<br>
+Run <b>consul.kv.py</b> to put all values into consul key-value storage.<br>
+````
+python src/services/consul_service/consul_kv.py
+````
+Please put all new hazelcast nodes addresses into kv with key 'hazelcast-client-N', 
+where N is number of node. Notice, that each logging-server wants node with the same number.
 
 Run all services using their runners.
 You can do it using default settings:
@@ -20,8 +28,8 @@ python src/services/facade_service/facade_server_run.py number server_host serve
 python src/services/facade_service/facade_server_run.py 1 127.0.0.1 8000
 ````
 ````
-python src/services/logging_service/logging_server_run.py server_number server_host server_port storage_node_address
-python src/services/logging_service/logging_server_run.py 1 127.0.0.1 8001 127.0.0.1:5701
+python src/services/logging_service/logging_server_run.py server_number server_host server_port
+python src/services/logging_service/logging_server_run.py 1 127.0.0.1 8001
 ````
 ````
 python src/services/messages_service/messages_server_run.py server_number server_host server_port

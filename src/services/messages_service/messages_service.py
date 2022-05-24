@@ -18,7 +18,9 @@ class MessageServer(Server):
         self.facade_server = []
         self.get_facade_server()
         self.storage = LocalMap()
-        self.queue = DistributedQueue()
+        self.queue_name = None
+        self.get_queue_info()
+        self.queue = DistributedQueue(self.queue_name)
         self.id = 0
         self.shutdown = False
         self.queue_msg = Thread(target=self.post_msg)
@@ -45,6 +47,10 @@ class MessageServer(Server):
         for server_name in services.keys():
             if services[server_name]['Service'] == 'facade-service':
                 self.facade_server.append(services[server_name]['Address'])
+
+    def get_queue_info(self):
+        index, data = self.consul.kv.get('hazelcast-queue-name')
+        self.queue_name = data['Value']
 
     def register_myself(self):
         url = "http://" + self.host + ":" + self.port + "/health"
