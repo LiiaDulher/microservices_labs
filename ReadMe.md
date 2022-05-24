@@ -16,8 +16,8 @@ python src/services/messages_service/messages_server_run.py
 ````
 or customize:
 ````
-python src/services/facade_service/facade_server_run.py number server_host server_port logging_server_urls(separated by comas, not spaces) messages_server_urls(separated by comas, not spaces)
-python src/services/facade_service/facade_server_run.py 1 127.0.0.1 8000 http://127.0.0.1:8001/,http://127.0.0.1:8003/,http://127.0.0.1:8004/ http://127.0.0.1:8002/,http://127.0.0.1:8005/
+python src/services/facade_service/facade_server_run.py number server_host server_port
+python src/services/facade_service/facade_server_run.py 1 127.0.0.1 8000
 ````
 ````
 python src/services/logging_service/logging_server_run.py server_number server_host server_port storage_node_address

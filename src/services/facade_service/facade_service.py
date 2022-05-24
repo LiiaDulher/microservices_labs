@@ -1,3 +1,4 @@
+import consul
 import random
 import requests
 import time
@@ -11,15 +12,19 @@ from services.server import Server
 
 
 class FacadeServer(Server):
-    def __init__(self, host, port):
-        super().__init__("FacadeService", host, port)
+    def __init__(self, number, host, port):
+        super().__init__("FacadeService" + str(number), host, port)
+        self.consul = consul.Consul()
+        self.register_myself()
         self.log_server = []
-        self.log_servers_removed = []
+        self.log_number = 0
         self.msg_server = []
-        self.msg_servers_removed = []
+        self.msg_number = 0
+        self.get_services()
         self.uuid = 0
         self.queue = DistributedQueue()
         self.shutdown = False
+        print(self.log_server, self.msg_server)
         self.updater = Thread(target=self.update_services)
         self.updater.daemon = True
         self.updater.start()
@@ -41,49 +46,46 @@ class FacadeServer(Server):
                 text = response2.text + response1.text
                 return Response(text, 200)
 
+        @self.app.route("/health", methods=['GET'])
+        def health_check():
+            return Response("healthy", 200)
+
     def __del__(self):
         self.shutdown = True
+        self.consul.agent.service.deregister(self.name)
         self.updater.join()
 
-    def add_logging_server(self, log_path):
-        self.log_server.append(log_path)
-
-    def add_messages_server(self, msg_path):
-        self.msg_server.append(msg_path)
+    def register_myself(self):
+        url = "http://" + self.host + ":" + self.port + "/health"
+        address = self.host + ":" + self.port
+        self.consul.agent.service.register(name='facade-service', service_id=self.name, address=address,
+                                           check=consul.Check.http(url=url, interval='10s'))
 
     def remove_logging_server(self, log_path):
         self.log_server.remove(log_path)
-        self.log_servers_removed.append(log_path)
 
     def remove_messages_server(self, msg_path):
         self.msg_server.remove(msg_path)
-        self.msg_servers_removed.append(msg_path)
+
+    def get_services(self):
+        services = self.consul.agent.services()
+        log_services = []
+        msg_services = []
+        for server_name in services.keys():
+            if services[server_name]['Service'] == 'logging-service':
+                log_services.append(services[server_name]['Address'])
+            elif services[server_name]['Service'] == 'messages-service':
+                msg_services.append(services[server_name]['Address'])
+        self.log_server = log_services
+        self.msg_server = msg_services
+        self.log_number = len(self.log_server)
+        self.msg_number = len(self.msg_server)
 
     def update_services(self):
         while not self.shutdown:
-            time.sleep(10)
-            restored = []
-            for server in self.log_servers_removed:
-                try:
-                    response = requests.get(server)
-                except requests.exceptions.RequestException as err:
-                    continue
-                if response.status_code == 200:
-                    self.add_logging_server(server)
-                    restored.append(server)
-            for server in restored:
-                self.log_servers_removed.remove(server)
-            restored = []
-            for server in self.msg_servers_removed:
-                try:
-                    response = requests.get(server)
-                except requests.exceptions.RequestException as err:
-                    continue
-                if response.status_code == 200:
-                    self.add_messages_server(server)
-                    restored.append(server)
-            for server in restored:
-                self.msg_servers_removed.remove(server)
+            time.sleep(30)
+            if (len(self.log_server) != self.log_number) or (len(self.msg_server) != self.msg_number):
+                self.get_services()
 
     def choose_random_logging_server(self):
         return random.choice(self.log_server)
@@ -117,7 +119,8 @@ class FacadeServer(Server):
         self.uuid += 1
         return Response("Message successfully posted", 200)
 
-    def get_request(self, server, server_type):
+    @staticmethod
+    def get_request(server, server_type):
         try:
             response = requests.get(server)
         except requests.exceptions.RequestException as err:
