@@ -46,7 +46,7 @@ class MessageServer(Server):
         services = self.consul.agent.services()
         for server_name in services.keys():
             if services[server_name]['Service'] == 'facade-service':
-                self.facade_server.append(services[server_name]['Address'])
+                self.facade_server.append('http://' + services[server_name]['Address'] + '/')
 
     def get_queue_info(self):
         index, data = self.consul.kv.get('hazelcast-queue-name')

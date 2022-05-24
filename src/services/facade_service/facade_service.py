@@ -23,6 +23,7 @@ class FacadeServer(Server):
         self.get_services()
         self.uuid = 0
         self.queue_name = None
+        self.get_queue_info()
         self.queue = DistributedQueue(self.queue_name)
         self.shutdown = False
         self.updater = Thread(target=self.update_services)
@@ -77,9 +78,9 @@ class FacadeServer(Server):
         msg_services = []
         for server_name in services.keys():
             if services[server_name]['Service'] == 'logging-service':
-                log_services.append(services[server_name]['Address'])
+                log_services.append('http://' + services[server_name]['Address'] + "/")
             elif services[server_name]['Service'] == 'messages-service':
-                msg_services.append(services[server_name]['Address'])
+                msg_services.append('http://' + services[server_name]['Address'] + "/")
         self.log_server = log_services
         self.msg_server = msg_services
         self.log_number = len(self.log_server)
