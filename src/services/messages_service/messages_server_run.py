@@ -9,7 +9,7 @@ def main():
         number = 1
         host = "127.0.0.1"
         port = 8002
-    elif n == 5:
+    elif n == 4:
         number = sys.argv[1]
         host = sys.argv[2]
         port = sys.argv[3]
