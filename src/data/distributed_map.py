@@ -9,17 +9,17 @@ class DistributedMap(DataStorage):
         try:
             self.hz = hazelcast.HazelcastClient(cluster_members=[
                 storage_node
-            ])
+            ], cluster_connect_timeout=30)
             self.map = self.hz.get_map("logging-service-distributed-map").blocking()
         except hazelcast.errors.IllegalStateError:
             print("Failed to connect to Hazelcast")
             self.map = None
 
-    def empty_map(self):
+    def is_unavailable(self):
         return self.map is None
 
     def save_data(self, uuid, msg):
-        if self.empty_map():
+        if self.is_unavailable():
             raise HazelcastUnavailable
         try:
             if self.map.contains_key(uuid):
@@ -30,7 +30,7 @@ class DistributedMap(DataStorage):
             raise HazelcastUnavailable
 
     def get_data_by_id(self, uuid):
-        if self.empty_map():
+        if self.is_unavailable():
             raise HazelcastUnavailable
         try:
             if self.map.contains_key(uuid):
@@ -41,7 +41,7 @@ class DistributedMap(DataStorage):
             raise HazelcastUnavailable
 
     def get_all_data(self):
-        if self.empty_map():
+        if self.is_unavailable():
             raise HazelcastUnavailable
         try:
             values = self.map.values()
