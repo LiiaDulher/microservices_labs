@@ -1,5 +1,4 @@
-# Task 5
-## Microservices with consul
+# Microservices 
 ## Team: [Liia Dulher](https://github.com/LiiaDulher)
 ### Usage
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
