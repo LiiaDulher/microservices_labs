@@ -9,11 +9,12 @@ from src.data.exceptions.hazelcast_unavailable_error import HazelcastUnavailable
 
 class LoggingServer(Server):
     def __init__(self, number, host, port, storage_node):
-        super().__init__("LoggingServer"+str(number), host, port)
+        super().__init__("LoggingServer" + str(number), host, port)
         self.consul = consul.Consul()
         self.storage = DistributedMap(storage_node)
-        self.facade_server = None
+        self.facade_server = []
         self.register_myself()
+        self.get_facade_server()
 
         @self.app.route("/", methods=['POST', 'GET'])
         def log_request():
@@ -39,10 +40,17 @@ class LoggingServer(Server):
         def health_check():
             return Response("healthy", 200)
 
+    def __del__(self):
+        self.consul.agent.service.deregister(self.name)
+
     def register_myself(self):
         url = "http://" + self.host + ":" + self.port + "/health"
-        self.consul.agent.service.register(name='logging-service', service_id=self.name,
-                                           check=consul.Check.http(url=url, interval='10s', deregister=True))
+        address = self.host + ":" + self.port
+        self.consul.agent.service.register(name='logging-service', service_id=self.name, address=address,
+                                           check=consul.Check.http(url=url, interval='10s'))
 
-    def add_facade_server(self, facade_path):
-        self.facade_server = facade_path
+    def get_facade_server(self):
+        services = self.consul.agent.services()
+        for server_name in services.keys():
+            if services[server_name]['Service'] == 'facade-service':
+                self.facade_server.append(services[server_name]['Address'])

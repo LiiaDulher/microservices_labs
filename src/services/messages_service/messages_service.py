@@ -12,10 +12,11 @@ from services.server import Server
 
 class MessageServer(Server):
     def __init__(self, number, host, port):
-        super().__init__("MessageServer"+str(number), host, port)
+        super().__init__("MessageServer" + str(number), host, port)
         self.consul = consul.Consul()
         self.register_myself()
-        self.facade_server = None
+        self.facade_server = []
+        self.get_facade_server()
         self.storage = LocalMap()
         self.queue = DistributedQueue()
         self.id = 0
@@ -36,14 +37,19 @@ class MessageServer(Server):
 
     def __del__(self):
         self.shutdown = True
+        self.consul.agent.service.deregister(self.name)
         self.queue_msg.join()
 
-    def add_facade_server(self, facade_path):
-        self.facade_server = facade_path
+    def get_facade_server(self):
+        services = self.consul.agent.services()
+        for server_name in services.keys():
+            if services[server_name]['Service'] == 'facade-service':
+                self.facade_server.append(services[server_name]['Address'])
 
     def register_myself(self):
         url = "http://" + self.host + ":" + self.port + "/health"
-        self.consul.agent.service.register(name='messages-service', service_id=self.name,
+        address = self.host + ":" + self.port
+        self.consul.agent.service.register(name='messages-service', service_id=self.name, address=address,
                                            check=consul.Check.http(url=url, interval='10s'))
 
     def post_msg(self):

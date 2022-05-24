@@ -22,7 +22,6 @@ def main():
               "server number, server host, server port, storage node url, facade server url")
         return
     server = LoggingServer(number, host, port, storage_node)
-    server.add_facade_server(facade_server)
     server.run()
 
 
