@@ -1,31 +1,39 @@
-# Task 4
-## Microservices with Messaging queue
+# Task 5
+## Microservices with consul
 ## Team: [Liia Dulher](https://github.com/LiiaDulher)
 ### Usage
 Please add project source directory to <b>PYTHONPATH</b> in order for imports to work.
 
-Run Hazelcast nodes before logging services, that use it.
-Run Hazelcast noodes before messaging services, that use it.
+Run Hazelcast nodes before logging services, that use it.<br>
+Run Hazelcast nodes before messaging services, that use it.
+
+Start consul before all other services.<br>
+Run <b>consul.kv.py</b> to put all values into consul key-value storage.<br>
+````
+python src/services/consul_service/consul_kv.py
+````
+Please put all new hazelcast nodes addresses into kv with key 'hazelcast-client-N', 
+where N is number of node. Notice, that each logging-server wants node with the same number.
 
 Run all services using their runners.
 You can do it using default settings:
 ````
-python src/services/run/facade_server_run.py
-python src/services/run/logging_server_run.py
-python src/services/run/messages_server_run.py
+python src/services/facade_service/facade_server_run.py
+python src/services/logging_service/logging_server_run.py
+python src/services/messages_service/messages_server_run.py
 ````
 or customize:
 ````
-python src/services/run/facade_server_run.py server_host server_port logging_server_urls(separated by comas, not spaces) messages_server_urls(separated by comas, not spaces)
-python src/services/run/facade_server_run.py 127.0.0.1 8000 http://127.0.0.1:8001/,http://127.0.0.1:8003/,http://127.0.0.1:8004/ http://127.0.0.1:8002/,http://127.0.0.1:8005/
+python src/services/facade_service/facade_server_run.py number server_host server_port
+python src/services/facade_service/facade_server_run.py 1 127.0.0.1 8000
 ````
 ````
-python src/services/run/logging_server_run.py server_number server_host server_port storage_node_address facade_server_url
-python src/services/run/logging_server_run.py 1 127.0.0.1 8001 127.0.0.1:5701 http://127.0.0.1:8000/
+python src/services/logging_service/logging_server_run.py server_number server_host server_port
+python src/services/logging_service/logging_server_run.py 1 127.0.0.1 8001
 ````
 ````
-python src/services/run/messages_server_run.py server_number server_host server_port facade_server_url
-python src/services/run/messages_server_run.py 2 127.0.0.1 8002 http://127.0.0.1:8000/
+python src/services/messages_service/messages_server_run.py server_number server_host server_port
+python src/services/messages_service/messages_server_run.py 2 127.0.0.1 8002
 ````
 
 You send <b>POST</b> or <b>GET</b> HTTP requests to facade services.
