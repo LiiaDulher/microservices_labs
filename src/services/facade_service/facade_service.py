@@ -24,7 +24,6 @@ class FacadeServer(Server):
         self.uuid = 0
         self.queue = DistributedQueue()
         self.shutdown = False
-        print(self.log_server, self.msg_server)
         self.updater = Thread(target=self.update_services)
         self.updater.daemon = True
         self.updater.start()
