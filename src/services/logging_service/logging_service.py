@@ -61,7 +61,7 @@ class LoggingServer(Server):
 
     def get_map_info(self):
         index, data = self.consul.kv.get('hazelcast-map-name')
-        self.map_name = data['Value']
+        self.map_name = data['Value'].decode('utf-8')
 
         index, data = self.consul.kv.get('hazelcast-client-' + str(self.number))
-        self.storage_node = data['Value']
+        self.storage_node = data['Value'].decode('utf-8')

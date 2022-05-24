@@ -50,7 +50,7 @@ class MessageServer(Server):
 
     def get_queue_info(self):
         index, data = self.consul.kv.get('hazelcast-queue-name')
-        self.queue_name = data['Value']
+        self.queue_name = data['Value'].decode('utf-8')
 
     def register_myself(self):
         url = "http://" + self.host + ":" + self.port + "/health"
